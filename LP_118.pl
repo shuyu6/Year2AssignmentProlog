@@ -3,8 +3,8 @@
 
 
 %Question 1 a
-
-%ancestor what is the expected input and output ?
+%copy and paste this in order to show all element in a long list 
+%set_prolog_flag(answer_write_options,[max_depth(0)]). true.
 
 parent(queenmother,elisabeth). 
 parent(elisabeth,charles).
@@ -132,7 +132,6 @@ showPattern(N,M):- N > 0, starRow(N,M),starEndRow(N,M) ,nl, NewN is N-1 , showPa
 
 
 %Question 1 d
-
 factorial(X,Y):- factorial(X,Y,1).
 factorial(0,A,A).
 factorial(X,Y,A):- X>0, X1 is X-1,NewA is A * X, factorial(X1,Y,NewA).
@@ -171,20 +170,19 @@ multinomial(XS,X):- sumList(XS,SUM_N),factorial(SUM_N,UPPER_N),factorialAndProdu
 %B : location of boat.
 %L : steps to achieves the goal.
 
-% W = 1 and B = 1 means both of them at bank A
 % ?- ferry(3,3,2).
 ferry(M,C,K):-state(K,M,C,0,0,1,1,[[K,M,C,0,0,1,1]]).
 
-%stop when bank A is empty, weapon and boat are at bank B
+%stop when bank A is empty weapon and boat are at bank B
 state(_,0,0,_,_,-1,-1,L):- output(L).
-state(K,AM,AC,BM,BC,W,B,L):- move([K,AM,AC,BM,BC,W,B],[K,AM1,AC1,BM1,BC1,W1,B1]),
+%W = 1 and B = 1 means both of them at bank A
+state(K,AM,AC,BM,BC,W,B,L):- 
+	move([K,AM,AC,BM,BC,W,B],[K,AM1,AC1,BM1,BC1,W1,B1]),
 	\+member([K,AM1,AC1,BM1,BC1,W1,B1],L),
 	state(K,AM1,AC1,BM1,BC1,W1,B1,[[K,AM1,AC1,BM1,BC1,W1,B1]|L]).
 	
-%move([2,3,3,0,0,1,1],X).
-%no move weapon
+%no moving weapon
 %only move massionaries from A to B
-/*
 move([K,AM,AC,BM,BC,1,1],[K,AM2,AC,BM2,BC,1,-1]):-
 	between(1,K,X),
 	AM2 is AM - X,
@@ -235,7 +233,7 @@ move([K,AM,AC,BM,BC,1,-1],[K,AM2,AC2,BM2,BC2,1,1]):-
 	BC2 is BC - X,
 	BM2 is BM - Y,
 	legalMove(AM2,AC2,BM2,BC2,1).
-*/
+
 %%%%%%%%%%%%%%%%%%%%% moving weapon %%%%%%%%%%%%%%%%%%%%%%%%%%
 %only move massionaries from A to B
 move([K,AM,AC,BM,BC,1,1],[K,AM2,AC,BM2,BC,-1,-1]):-
@@ -276,6 +274,7 @@ move([K,AM,AC,BM,BC,1,-1],[K,AM2,AC2,BM2,BC2,-1,1]):-
 	legalMove(AM2,AC2,BM2,BC2,-1).
 
 %determine whether that is a legal move 
+%legalMove(3,1,0,2,-1).
 legalMove(AM,AC,BM,BC,W):- 
 	AM>=0,AC>=0,BM>=0,BC>=0,
 	(AM>=AC ; W =:= 1 ; AM=:= 0),
