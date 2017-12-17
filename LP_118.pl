@@ -60,12 +60,22 @@ mother(X,Y):- parent(X,Y),the_royal_females(XS),member(X,XS).   %X : mother, Y :
 has_child(X):- parent(X,_).
 grandparent(X,Y):-parent(X,Z),parent(Z,Y).
 
-%ancestor(X,Y):- ancestor(X,Y,[],FAMILY),the_royal_family(FAMILY).
-%ancestor(_,Y,Y,[]).
-%ancestor(X,Y,Z,[FH|FT]):- \+parent(FH,X),ancestor(X,Y,Z,FT).
-%ancestor(X,Y,Z,[FH|FT]):- parent(FH,X),member(FH,Z),ancestor(FH,Y,Z,FT).
-%ancestor(X,Y,Z,[FH|FT]):- parent(FH,X),\+member(FH,Z),ancestor(FH,Y,[FH,Z],FT).
-%ancestor(X,Y,Z,[FH|FT]):- \+parent(FH,X),ancestor(X,Y,Z,FT)
+ancestor(X,Y):- parent(X,Y).
+ancestor(X,Y):- parent(X,Z), ancestor(Z,Y).
+
+count([],0).
+count([_|T],N) :- count(T,N1), N is N1+1.
+
+countDescendants(X,Y):- findall(Z,ancestor(X,Z),L), count(L,Y).
+fourOrMoreDecendants(X):- countDescendants(X,Y), Y >= 4.
+
+nameMoreDescendants(X,A): -nameMoreDescendants(X,A,[]).
+
+nameMoreDescendants([],A,A).
+nameMoreDescendants([X|XS],A,O) :- \+fourOrMoreDecendants(X),nameMoreDescendants(XS,A,O).
+nameMoreDescendants([X|XS],A,O) :- fourOrMoreDecendants(X),nameMoreDescendants(XS,A,[X|O]).
+
+nameMoreDescendants(A):- the_royal_family(X), nameMoreDescendants(X,A).
 
 all_ancestor(X,Y):- all_ancestor(X,Y,[]).
 all_ancestor(_,Y,Y).
@@ -145,7 +155,19 @@ factorialAndProduct([],A,A).
 factorialAndProduct([X|XS],O,A):- factorial(X,XO),NewA is A * XO, factorialAndProduct(XS,O,NewA).
 
 multinomial(XS,X):- sumList(XS,SUM_N),factorial(SUM_N,UPPER_N),factorialAndProduct(XS,LOWER_N),X is UPPER_N / LOWER_N.
+/*
+factorial(0,1).
+factorial(N,X):-  N>0, NewN is N-1, factorial(NewN,F), X is N * F.
 
+facList([],1).
+facList([H|T],X):- factorial(H,N), facList(T,Y), X is N * Y.
+
+sumOfList([],0).
+sumOfList([H|T],S):- sumOfList(T,X), S is H+X.
+
+multinomial([],0).
+multinomial(L,X):- sumOfList(L,Y),factorial(Y,N),facList(L,M),X is N / M.
+*/
 %%%%%%%%%%%% Example Output %%%%%%%%%%%%%%
 % ?- multinomial([2,2,2,2],X).
 % X = 2520 ;
@@ -255,14 +277,14 @@ move([K,AM,AC,BM,BC,1,1],[K,AM2,AC2,BM2,BC2,-1,-1]):-
 	legalMove(AM2,AC2,BM2,BC2,-1).
 
 %only move massionaries from B to A
-move([K,AM,AC,BM,BC,1,-1],[K,AM2,AC,BM2,BC,-1,1]):-
+move([K,AM,AC,BM,BC,-1,-1],[K,AM2,AC,BM2,BC,1,1]):-
 	between(1,K,X),
 	AM2 is AM + X,
 	BM2 is BM - X,
 	legalMove(AM2,AC,BM2,BC,-1).
 		
 %move both from B to A
-move([K,AM,AC,BM,BC,1,-1],[K,AM2,AC2,BM2,BC2,-1,1]):-
+move([K,AM,AC,BM,BC,-1,-1],[K,AM2,AC2,BM2,BC2,1,1]):-
 	between(1,K,X),
 	between(1,K,Y),	
 	SumXY is X+Y,
@@ -271,14 +293,14 @@ move([K,AM,AC,BM,BC,1,-1],[K,AM2,AC2,BM2,BC2,-1,1]):-
 	AM2 is AM + Y,
 	BC2 is BC - X,
 	BM2 is BM - Y,
-	legalMove(AM2,AC2,BM2,BC2,-1).
+	legalMove(AM2,AC2,BM2,BC2,1).
 
 %determine whether that is a legal move 
 %legalMove(3,1,0,2,-1).
 legalMove(AM,AC,BM,BC,W):- 
 	AM>=0,AC>=0,BM>=0,BC>=0,
-	(AM>=AC ; W =:= 1 ; AM=:= 0),
-	(BM>=BC ; W =:= -1 ; BM=:= 0).
+	(AM>=AC ; (AM =\= 0, AC >= AM , W =:= 1) ; (AM=:= 0, W =:= -1)),
+	(BM>=BC ; (BM =\= 0, BC >= BM , W =:= -1) ; (BM=:= 0, W =:= 1)).
 
 %print out all of the list 	
 output([]):- nl.
