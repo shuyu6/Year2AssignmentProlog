@@ -1,63 +1,47 @@
-% Student ID : 967439 		Student Name : Goh Shu Yu 
-% Student ID : 916518 		Student Name : Saskia Davies 
+/*
+Group number: 118 
+Saskia Davies 915681
+Shu Yu Goh    967439
+Ho Nam Michael Lam
+*/
 
+%%%%%%%%%%%%%%%%%%%%%%%%% Question 1 a %%%%%%%%%%%%%%%%%%%%%%%%%
 
-%Question 1 a
-%copy and paste this in order to show all element in a long list 
-%set_prolog_flag(answer_write_options,[max_depth(0)]). true.
-
-parent(queenmother,elisabeth). 
+% Program: ROYAL
+parent(queenmother,elisabeth).
 parent(elisabeth,charles).
-parent(elisabeth,andrew). 
+parent(elisabeth,andrew).
 parent(elisabeth,anne).
-parent(elisabeth,edward). 
+parent(elisabeth,edward).
 parent(diana,william).
-parent(diana,harry). 
+parent(diana,harry).
 parent(sarah,beatrice).
-parent(anne,peter). 
+parent(anne,peter).
 parent(anne,zara).
-parent(george,elisabeth). 
+parent(george,elisabeth).
 parent(philip,charles).
-parent(philip,andrew). 
+parent(philip,andrew).
 parent(philip,edward).
-parent(charles,william). 
+parent(charles,william).
 parent(charles,harry).
-parent(andrew,beatrice). 
+parent(andrew,beatrice).
 parent(andrew,eugenie).
-parent(mark,peter). 
+parent(mark,peter).
 parent(mark,zara).
-parent(william,georgejun). 
+parent(william,georgejun).
 parent(kate,georgejun).
 parent(kate,charlotte).
 
-/*
-the_royal_females(queenmother).
-the_royal_females(elisabeth).
-the_royal_females(anne).
-the_royal_females(diana).
-the_royal_females(sarah).
-the_royal_females(zara).
-the_royal_females(kate).
-the_royal_females(charlotte).
+the_royal_females([queenmother,elisabeth,anne,diana,sarah,zara,kate,charlotte,beatrice,eugenie]).
 
-the_royal_males(charles).
-the_royal_males(andrew).
-the_royal_males(edward).
-the_royal_males(william).
-the_royal_males(harry).
-the_royal_males(beatrice).
-the_royal_males(peter).
-the_royal_males(george).
-the_royal_males(philip).
-the_royal_males(mark).
-the_royal_males(eugenie).
-the_royal_males(georgejun).*/
+the_royal_males([charles,andrew,edward,william,harry,peter,george,philip,mark,georgejun]).
 
-the_royal_females([queenmother,elisabeth,anne,diana,sarah,zara,kate,charlotte]).
-the_royal_males([charles,andrew,edward,william,harry,beatrice,peter,george,philip,mark,eugenie,georgejun]).
 the_royal_family(X):- the_royal_females(Y),the_royal_males(Z),append(Y,Z,X). 
+
 mother(X,Y):- parent(X,Y),the_royal_females(XS),member(X,XS).   %X : mother, Y : child
+
 has_child(X):- parent(X,_).
+
 grandparent(X,Y):-parent(X,Z),parent(Z,Y).
 
 ancestor(X,Y):- parent(X,Y).
@@ -67,9 +51,10 @@ count([],0).
 count([_|T],N) :- count(T,N1), N is N1+1.
 
 countDescendants(X,Y):- findall(Z,ancestor(X,Z),L), count(L,Y).
+
 fourOrMoreDecendants(X):- countDescendants(X,Y), Y >= 4.
 
-nameMoreDescendants(X,A): -nameMoreDescendants(X,A,[]).
+nameMoreDescendants(X,A):- nameMoreDescendants(X,A,[]).
 
 nameMoreDescendants([],A,A).
 nameMoreDescendants([X|XS],A,O) :- \+fourOrMoreDecendants(X),nameMoreDescendants(XS,A,O).
@@ -77,26 +62,53 @@ nameMoreDescendants([X|XS],A,O) :- fourOrMoreDecendants(X),nameMoreDescendants(X
 
 nameMoreDescendants(A):- the_royal_family(X), nameMoreDescendants(X,A).
 
-all_ancestor(X,Y):- all_ancestor(X,Y,[]).
-all_ancestor(_,Y,Y).
-all_ancestor(X,Y,Z):- parent(XP,X),all_ancestor(XP,Y,[XP|Z]).
+/*
+?- mother(X,beatrice).
+X = sarah ? ;
+no
 
-%mother(X,beatrice).
-%X = sarah ;
+?- nameMoreDescendants(X).
+X = [philip, george, elisabeth, queenmother] ;
+no
 
+ancestor(queenmother,X).
+X = elisabeth ? ;
+X = charles ? ;
+X = andrew ? ;
+X = anne ? ;
+X = edward ? ;
+X = william ? ;
+X = harry ? ;
+X = georgejun ? ;
+X = beatrice ? ;
+X = eugenie ? ;
+X = peter ? ;
+X = zara ? ;
+no
+*/
 
-%the_royal_females(X).
-%the_royal_males(X).
-%mother(X,beatrice).
-%has_child(X).
-%grandparent(X,Y).
+%%%%%%%%%%%%%%%%%%%%%%%%% Question 1 b %%%%%%%%%%%%%%%%%%%%%%%%%
 
-%Question 1 b
-sibling(X,Y):-parent(Z,X),parent(Z,Y),X\=Y,X\=Z,Y\=Z.
+sibling(X,Y):- parent(Z,X), parent(Z,Y), X\=Y.
+
 aunt(X,Y):-parent(Z,Y),sibling(Z,X),the_royal_females(XS),member(X,XS).
 
+/*
+?- sibling(charles,X).
+X = andrew ? ;
+X = anne ? ;
+X = edward ? ;
+X = andrew ? ;
+X = edward ? ;
+no
 
-%Question 1 c
+?- aunt(X,william).
+X = anne ? ;
+no
+*/
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Question 1 c %%%%%%%%%%%%%%%%%%%%%%%%%
+
 starRow(0,0).
 starRow(0,N):- N>0 , write(' ') , NewN is N-1 , starRow(0,NewN).
 starRow(N,N):- N>0 , write('*') , NewN is N-1 , starRow(NewN,NewN).
@@ -111,37 +123,34 @@ showPattern(0,_).
 showPattern(N,N):- N > 0, starRow(N,N),starEndRow(N,N) ,nl, NewN is N-1 , showPattern(NewN,N),starRow(N,N),starEndRow(N,N),nl.
 showPattern(N,M):- N > 0, starRow(N,M),starEndRow(N,M) ,nl, NewN is N-1 , showPattern(NewN,M),starRow(N,M),starEndRow(N,M),nl.
 
-%%%%%%%%%%%%%%%%% Example Output  %%%%%%%%%%%%%%%%%%%%
-% ?- showPattern(3).
-% ******
-% **  **
-% *    *
-% *    *
-% **  **
-% ******
-% true ;
-% false.
-%
-% ?- showPattern(6).
-% ************
-% *****  *****
-% ****    ****
-% ***      ***
-% **        **
-% *          *
-% *          *
-% **        **
-% ***      ***
-% ****    ****
-% *****  *****
-% ************
-% true ;
-% false.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*
+?- showPattern(3).
+******
+**  **
+*    *
+*    *
+**  **
+******
+yes.
 
+?- showPattern(6).
+************
+*****  *****
+****    ****
+***      ***
+**        **
+*          *
+*          *
+**        **
+***      ***
+****    ****
+*****  *****
+************
+yes.
+*/
 
+%%%%%%%%%%%%%%%%%%%%%%%%% Question 1 d %%%%%%%%%%%%%%%%%%%%%%%%%
 
-%Question 1 d
 factorial(X,Y):- factorial(X,Y,1).
 factorial(0,A,A).
 factorial(X,Y,A):- X>0, X1 is X-1,NewA is A * X, factorial(X1,Y,NewA).
@@ -155,42 +164,32 @@ factorialAndProduct([],A,A).
 factorialAndProduct([X|XS],O,A):- factorial(X,XO),NewA is A * XO, factorialAndProduct(XS,O,NewA).
 
 multinomial(XS,X):- sumList(XS,SUM_N),factorial(SUM_N,UPPER_N),factorialAndProduct(XS,LOWER_N),X is UPPER_N / LOWER_N.
+
 /*
-factorial(0,1).
-factorial(N,X):-  N>0, NewN is N-1, factorial(NewN,F), X is N * F.
+?- multinomial([2,2,2,2],X).
+X = 2520.0 ? ;
+no
+?- multinomial([3,4,5,5],X).
+X = 171531360.0 ? ;
+no
 
-facList([],1).
-facList([H|T],X):- factorial(H,N), facList(T,Y), X is N * Y.
-
-sumOfList([],0).
-sumOfList([H|T],S):- sumOfList(T,X), S is H+X.
-
-multinomial([],0).
-multinomial(L,X):- sumOfList(L,Y),factorial(Y,N),facList(L,M),X is N / M.
-*/
-%%%%%%%%%%%% Example Output %%%%%%%%%%%%%%
-% ?- multinomial([2,2,2,2],X).
-% X = 2520 ;
-% false.
-
-% ?- multinomial([3,5,6,7],X).
-% X = 19554575040 ;
-% false.
-
-% ?- time(multinomial([2500,5200,5020,5020],X)).
+?- time(multinomial([2500,5200,5020,5020],X)).
 % 106,471 inferences, 0.094 CPU in 0.092 seconds (102% CPU, 1135691 Lips)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+*/
 
+%%%%%%%%%%%%%%%%%%%%%%%%%% Question 2 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%Question 2 
 %K : boat capacity
 %AM: missionaries at bank A.
 %AC: cannibals at bank A.
 %BM: missionaries at bank B.
 %BC: cannibals at bank B.
-%W : location of weapon. 0 left 1 right 
-%B : location of boat.
+%W : location of weapon. 1 left -1 right 
+%B : location of boat. 1 left -1 right
 %L : steps to achieves the goal.
+
+myBetween(X,Y,X):- X=<Y.
+myBetween(X,Y,Z):- X<Y, NewX is X+1, myBetween(NewX, Y, Z).
 
 % ?- ferry(3,3,2).
 ferry(M,C,K):-state(K,M,C,0,0,1,1,[[K,M,C,0,0,1,1]]).
@@ -206,24 +205,24 @@ state(K,AM,AC,BM,BC,W,B,L):-
 %no moving weapon
 %only move massionaries from A to B
 move([K,AM,AC,BM,BC,1,1],[K,AM2,AC,BM2,BC,1,-1]):-
-	between(1,K,X),
+	myBetween(1,K,X),
 	AM2 is AM - X,
 	BM2 is BM + X,
 	legalMove(AM2,AC,BM2,BC,1).
 	
 %only move cabbinal from A to B
 move([K,AM,AC,BM,BC,1,1],[K,AM,AC2,BM,BC2,1,-1]):-
-	between(1,K,X),
+	myBetween(1,K,X),
 	AC2 is AC - X,
 	BC2 is BC + X,
 	legalMove(AM,AC2,BM,BC2,1).
 	
 %move both from A to B
 move([K,AM,AC,BM,BC,1,1],[K,AM2,AC2,BM2,BC2,1,-1]):-
-	between(1,K,X),
-	between(1,K,Y),	
+	myBetween(1,K,X),
+	myBetween(1,K,Y),	
 	SumXY is X+Y,
-	between(1,K,SumXY),
+	myBetween(1,K,SumXY),
 	AC2 is AC - X,
 	AM2 is AM - Y,
 	BC2 is BC + X,
@@ -232,24 +231,24 @@ move([K,AM,AC,BM,BC,1,1],[K,AM2,AC2,BM2,BC2,1,-1]):-
 
 %only move massionaries from B to A
 move([K,AM,AC,BM,BC,1,-1],[K,AM2,AC,BM2,BC,1,1]):-
-	between(1,K,X),
+	myBetween(1,K,X),
 	AM2 is AM + X,
 	BM2 is BM - X,
 	legalMove(AM2,AC,BM2,BC,1).
 	
 %only move cabbinal from B to A
 move([K,AM,AC,BM,BC,1,-1],[K,AM,AC2,BM,BC2,1,1]):-
-	between(1,K,X),
+	myBetween(1,K,X),
 	AC2 is AC + X,
 	BC2 is BC - X,
 	legalMove(AM,AC2,BM,BC2,1).
 	
 %move both from B to A
 move([K,AM,AC,BM,BC,1,-1],[K,AM2,AC2,BM2,BC2,1,1]):-
-	between(1,K,X),
-	between(1,K,Y),	
+	myBetween(1,K,X),
+	myBetween(1,K,Y),	
 	SumXY is X+Y,
-	between(1,K,SumXY),
+	myBetween(1,K,SumXY),
 	AC2 is AC + X,
 	AM2 is AM + Y,
 	BC2 is BC - X,
@@ -259,17 +258,17 @@ move([K,AM,AC,BM,BC,1,-1],[K,AM2,AC2,BM2,BC2,1,1]):-
 %%%%%%%%%%%%%%%%%%%%% moving weapon %%%%%%%%%%%%%%%%%%%%%%%%%%
 %only move massionaries from A to B
 move([K,AM,AC,BM,BC,1,1],[K,AM2,AC,BM2,BC,-1,-1]):-
-	between(1,K,X),
+	myBetween(1,K,X),
 	AM2 is AM - X,
 	BM2 is BM + X,
 	legalMove(AM2,AC,BM2,BC,-1).
 		
 %move both from A to B
 move([K,AM,AC,BM,BC,1,1],[K,AM2,AC2,BM2,BC2,-1,-1]):-
-	between(1,K,X),
-	between(1,K,Y),	
+	myBetween(1,K,X),
+	myBetween(1,K,Y),	
 	SumXY is X+Y,
-	between(1,K,SumXY),
+	myBetween(1,K,SumXY),
 	AC2 is AC - X,
 	AM2 is AM - Y,
 	BC2 is BC + X,
@@ -278,17 +277,17 @@ move([K,AM,AC,BM,BC,1,1],[K,AM2,AC2,BM2,BC2,-1,-1]):-
 
 %only move massionaries from B to A
 move([K,AM,AC,BM,BC,-1,-1],[K,AM2,AC,BM2,BC,1,1]):-
-	between(1,K,X),
+	myBetween(1,K,X),
 	AM2 is AM + X,
 	BM2 is BM - X,
-	legalMove(AM2,AC,BM2,BC,-1).
+	legalMove(AM2,AC,BM2,BC,1).
 		
 %move both from B to A
 move([K,AM,AC,BM,BC,-1,-1],[K,AM2,AC2,BM2,BC2,1,1]):-
-	between(1,K,X),
-	between(1,K,Y),	
+	myBetween(1,K,X),
+	myBetween(1,K,Y),	
 	SumXY is X+Y,
-	between(1,K,SumXY),
+	myBetween(1,K,SumXY),
 	AC2 is AC + X,
 	AM2 is AM + Y,
 	BC2 is BC - X,
@@ -299,17 +298,27 @@ move([K,AM,AC,BM,BC,-1,-1],[K,AM2,AC2,BM2,BC2,1,1]):-
 %legalMove(3,1,0,2,-1).
 legalMove(AM,AC,BM,BC,W):- 
 	AM>=0,AC>=0,BM>=0,BC>=0,
-	(AM>=AC ; (AM =\= 0, AC >= AM , W =:= 1) ; (AM=:= 0, W =:= -1)),
-	(BM>=BC ; (BM =\= 0, BC >= BM , W =:= -1) ; (BM=:= 0, W =:= 1)).
+	(AM>=AC ; (AM =\= 0, AC >= AM, W =:= 1) ; (AM =:= 0, W =:= -1)),
+	(BM>=BC ; (BM =\= 0, BC >= BM, W =:= -1) ; (BM =:= 0, W =:= 1)).
 
 %print out all of the list 	
 output([]):- nl.
 output([L|LS]):-output(LS), write(L),nl.
 
+/*
+?- ferry(3,3,2).
 
-
-
-
-
-
-
+[2,3,3,0,0,1,1]
+[2,1,3,2,0,1,-1]
+[2,2,3,1,0,1,1]
+[2,2,2,1,1,1,-1]
+[2,3,2,0,1,1,1]
+[2,1,2,2,1,1,-1]
+[2,2,2,1,1,1,1]
+[2,1,1,2,2,1,-1]
+[2,1,2,2,1,1,1]
+[2,0,1,3,2,-1,-1]
+[2,1,1,2,2,1,1]
+[2,0,0,3,3,-1,-1]
+yes
+*/
