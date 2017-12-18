@@ -63,14 +63,17 @@ nameMoreDescendants([X|XS],A,O) :- fourOrMoreDecendants(X),nameMoreDescendants(X
 nameMoreDescendants(A):- the_royal_family(X), nameMoreDescendants(X,A).
 
 /*
+-------question 8-------
 ?- mother(X,beatrice).
 X = sarah ? ;
 no
 
+-------question 9-------
 ?- nameMoreDescendants(X).
 X = [philip, george, elisabeth, queenmother] ;
 no
 
+-------question 10-------
 ancestor(queenmother,X).
 X = elisabeth ? ;
 X = charles ? ;
@@ -108,21 +111,15 @@ no
 */
 
 %%%%%%%%%%%%%%%%%%%%%%%%% Question 1 c %%%%%%%%%%%%%%%%%%%%%%%%%
+starRow(0).
+starRow(N):- N>0 , write('*') , NewN is N-1 , starRow(NewN).
 
-starRow(0,0).
-starRow(0,N):- N>0 , write(' ') , NewN is N-1 , starRow(0,NewN).
-starRow(N,N):- N>0 , write('*') , NewN is N-1 , starRow(NewN,NewN).
-starRow(N,M):- N>0 , write('*') , NewN is N-1 , NewM is M-1, starRow(NewN,NewM).
+spaceRow(0).
+spaceRow(N):- N>0, write('  '), NewN is N-1, spaceRow(NewN).
 
-starEndRow(0,0).
-starEndRow(N,N):- N>0, write('*') , NewN is N-1 , starEndRow(NewN,NewN).
-starEndRow(N,M):- N>0, M>N , write(' '), NewM is M-1, starEndRow(N,NewM).
-
-showPattern(N):-showPattern(N,N).
+showPattern(N):- showPattern(N,0).
 showPattern(0,_).
-showPattern(N,N):- N > 0, starRow(N,N),starEndRow(N,N) ,nl, NewN is N-1 , showPattern(NewN,N),starRow(N,N),starEndRow(N,N),nl.
-showPattern(N,M):- N > 0, starRow(N,M),starEndRow(N,M) ,nl, NewN is N-1 , showPattern(NewN,M),starRow(N,M),starEndRow(N,M),nl.
-
+showPattern(N,H):- N > 0, starRow(N), spaceRow(H), starRow(N), nl, NewN is N-1, NewH is H+1, showPattern(NewN,NewH),starRow(N), spaceRow(H), starRow(N), nl.
 /*
 ?- showPattern(3).
 ******
@@ -187,9 +184,6 @@ no
 %W : location of weapon. 1 left -1 right 
 %B : location of boat. 1 left -1 right
 %L : steps to achieves the goal.
-
-myBetween(X,Y,X):- X=<Y.
-myBetween(X,Y,Z):- X<Y, NewX is X+1, myBetween(NewX, Y, Z).
 
 % ?- ferry(3,3,2).
 ferry(M,C,K):-state(K,M,C,0,0,1,1,[[K,M,C,0,0,1,1]]).
@@ -297,13 +291,19 @@ move([K,AM,AC,BM,BC,-1,-1],[K,AM2,AC2,BM2,BC2,1,1]):-
 %determine whether that is a legal move 
 %legalMove(3,1,0,2,-1).
 legalMove(AM,AC,BM,BC,W):- 
+	%all should be positive number 
 	AM>=0,AC>=0,BM>=0,BC>=0,
 	(AM>=AC ; (AM =\= 0, AC >= AM, W =:= 1) ; (AM =:= 0, W =:= -1)),
 	(BM>=BC ; (BM =\= 0, BC >= BM, W =:= -1) ; (BM =:= 0, W =:= 1)).
 
-%print out all of the list 	
+%print out all of the output list 	
 output([]):- nl.
 output([L|LS]):-output(LS), write(L),nl.
+
+%check Z whether is between X and Y
+myBetween(X,Y,X):- X=<Y.
+myBetween(X,Y,Z):- X<Y, NewX is X+1, myBetween(NewX, Y, Z).
+
 
 /*
 ?- ferry(3,3,2).
