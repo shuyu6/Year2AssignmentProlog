@@ -186,11 +186,12 @@ no
 %L : steps to achieves the goal.
 
 % ?- ferry(3,3,2).
-ferry(M,C,K):-state(K,M,C,0,0,1,1,[[K,M,C,0,0,1,1]]).
+ferry(M,C,K):-state(K,M,C,0,0,1,1,[]).
 
 %stop when bank A is empty weapon and boat are at bank B
 state(_,0,0,_,_,-1,-1,L):- output(L).
 %W = 1 and B = 1 means both of them at bank A
+state(K,M,C,0,0,1,1,[]):-state(K,M,C,0,0,1,1,[[K,M,C,0,0,1,1]]).
 state(K,AM,AC,BM,BC,W,B,L):- 
 	move([K,AM,AC,BM,BC,W,B],[K,AM1,AC1,BM1,BC1,W1,B1]),
 	\+member([K,AM1,AC1,BM1,BC1,W1,B1],L),
@@ -217,6 +218,7 @@ move([K,AM,AC,BM,BC,1,1],[K,AM2,AC2,BM2,BC2,1,-1]):-
 	myBetween(1,K,Y),	
 	SumXY is X+Y,
 	myBetween(1,K,SumXY),
+	Y >= X,
 	AC2 is AC - X,
 	AM2 is AM - Y,
 	BC2 is BC + X,
@@ -243,6 +245,7 @@ move([K,AM,AC,BM,BC,1,-1],[K,AM2,AC2,BM2,BC2,1,1]):-
 	myBetween(1,K,Y),	
 	SumXY is X+Y,
 	myBetween(1,K,SumXY),
+	Y >= X,
 	AC2 is AC + X,
 	AM2 is AM + Y,
 	BC2 is BC - X,
@@ -263,6 +266,7 @@ move([K,AM,AC,BM,BC,1,1],[K,AM2,AC2,BM2,BC2,-1,-1]):-
 	myBetween(1,K,Y),	
 	SumXY is X+Y,
 	myBetween(1,K,SumXY),
+	Y >= X,
 	AC2 is AC - X,
 	AM2 is AM - Y,
 	BC2 is BC + X,
@@ -282,6 +286,7 @@ move([K,AM,AC,BM,BC,-1,-1],[K,AM2,AC2,BM2,BC2,1,1]):-
 	myBetween(1,K,Y),	
 	SumXY is X+Y,
 	myBetween(1,K,SumXY),
+	Y >= X,
 	AC2 is AC + X,
 	AM2 is AM + Y,
 	BC2 is BC - X,
